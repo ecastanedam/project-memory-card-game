@@ -1,0 +1,7 @@
+body {
+    background: url(./img/background.jpg) no-repeat;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif
+}
