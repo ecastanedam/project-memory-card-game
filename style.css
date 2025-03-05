@@ -9,7 +9,8 @@ body {
 .game-board{
     display: grid;
     grid-template-columns: repeat(4,120px);
-    gap: 15px;
+    gap: 10px;
+    max-width: 90;
     margin: 20px auto;
     width: 740px;
     align-items: center;
@@ -39,13 +40,13 @@ body {
 .front, .back{
     width: 100%;
     height: 100%;
-    position:absolute;
+    position: absolute;
     top: 0;
     left: 0;
 }
 
 .front {
-    
+    transform: rotateY(180deg); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,14 +54,31 @@ body {
 }
 
 .back {
-    transform: rotateY(180deg); /*initially hidden*/
-    background-color: #2980b9;
+    background-color: #1778b9;
     z-index: 2;
+    visibility: visible;
+}
+
+.card.turned .back{
+    visibility: hidden;
 }
 
 .card.matched{
-    opacity: 0.25;
+    opacity: 0.2;
     cursor: default;
+}
+
+.card.matched.animate{
+    animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse{
+    0%{
+        transform: scale(1);
+    }
+    100%{
+        transform: scale(1.1);
+    }
 }
 
 .card-image{
@@ -74,14 +92,22 @@ body {
 }
 
 #score{
-    font-size: 1.4em;
+    font-size: 1.5em;
     margin-bottom: 10px;
     color: whitesmoke;
     padding: 5px;
     border-radius: 5px;
+    background-color: #262474;
 }
 
 h1{
     color: #fff;
     text-align: center;
+}
+
+#move-counter{
+
+    font-size: 1.25em;
+    color: lightblue;
+    background-color: #262474;
 }

@@ -1,4 +1,3 @@
-//html elements stored in variables
 
 const splashScreen = document.getElementById("splash-screen");
 const gameScreen = document.getElementById("game-screen");
@@ -7,6 +6,15 @@ const startButton = document.getElementById("start-button");
 const restartButton = document.getElementById("restart-button");
 const gameBoard = document.querySelector(".game-board"); // finds and element by the CSS selector class
 
+const flipSound = new Audio("sounds/woosh.mp3");
+const backGroundMusic = new Audio("sounds/Cosmic Drift - DivKid.mp3");
+backGroundMusic.loop = true;
+backGroundMusic.volume = 0.10;
+
+function playBackGroundMusic() {
+  backGroundMusic.play();
+}
+
 // blueprint for creating game objects
 
 class MemoryGame {
@@ -14,7 +22,7 @@ class MemoryGame {
     this.board = gameBoardElement; //stores the game board element
     this.cardsData = [
       // array of card data, name and image
-      { name: "one", img: "one.jpg" }, 
+      { name: "one", img: "one.jpg" },
       { name: "two", img: "two.jpg" },
       { name: "three", img: "three.jpg" },
       { name: "four", img: "four.jpg" },
@@ -40,8 +48,22 @@ class MemoryGame {
     this.flippedCards = []; // array to store the flipped cards
     this.shuffleCards(); //method to shuffle the card data
     this.createCards(); //method to create card elements and add them to the game board
-    this.score = 0; // initialize the score
+    this.score =0; // initialize the score
     this.scoreDisplay = document.getElementById("score"); //stores the score display element
+    this.moveCount = 0;
+    this.createMoveCounterDisplay();
+  }
+
+  createMoveCounterDisplay(){
+    this.moveCounterDisplay= document.createElement("div");
+    this.moveCounterDisplay.id= "move-counter";
+    this.moveCounterDisplay.textContent= "Moves: 0";
+    gameScreen.appendChild(this.moveCounterDisplay);
+  }
+
+  incrementMoveCount(){
+    this.moveCount++;
+    this.moveCounterDisplay.textContent= `Moves: ${this.moveCount}`;
   }
 
   // shuffles the card data
@@ -58,19 +80,18 @@ class MemoryGame {
   //method to create card elements and add them to the game board
   createCards() {
     this.cardsData.forEach((cardData, index) => {
-      
       const card = document.createElement("div"); // creates a div for the card
       card.classList.add("card"); // adds class "card" to the card div for styling
       card.dataset.index = index; // stores card index as attribute
       card.dataset.name = cardData.name; // stores card name as attribute
-      
+
       const cardInner = document.createElement("div"); // contains front and back sides
       cardInner.classList.add("card-inner");
 
-      const cardFront= document.createElement("div");
+      const cardFront = document.createElement("div");
       cardFront.classList.add("front");
       const img = document.createElement("img");
-      img.src = `images/${cardData.img}`;
+      img.src = `img/${cardData.img}`;
       img.classList.add("card-image");
       cardFront.appendChild(img);
 
@@ -80,13 +101,10 @@ class MemoryGame {
       cardInner.appendChild(cardFront);
       cardInner.appendChild(cardBack);
       card.appendChild(cardInner);
-      
+
       card.addEventListener("click", () => this.flipCard(card)); // adds a click event listener
       this.board.appendChild(card); // add the card to the game board
       this.cards.push(card); // adds the card to the cards array
-
-      console.log(`Created card with image: ${img.src}`);
-      img.onerror = () => console.error(`Failed to load image: ${img.src}`);
     });
   }
 
@@ -98,6 +116,8 @@ class MemoryGame {
     ) {
       card.classList.add("turned"); // adds the class "turned" to the clicked card div
       this.flippedCards.push(card); //add the clicked card div to the flippedCards array
+      this.incrementMoveCount();
+      flipSound.play(); // plays woosh sound
       if (this.flippedCards.length === 2) {
         // checks if two cards have been flipped
         this.checkForMatch(); //calls the checkForMatch method to check if the cards match
@@ -111,9 +131,16 @@ class MemoryGame {
       //if the cards match
       card1.classList.add("matched"); //adds the class "matched" to each card
       card2.classList.add("matched"); //adds the class "matched" to each card
+      card1.classList.add("animate"); // adds "animate" class
+      card2.classList.add("animate");
+
       this.flippedCards = []; // clears the flipped cards array
       this.checkWin(); //checks if the player has won
       this.updateScore(10); // updates the score
+      setTimeout(() => {
+        card1.classList.remove("animate");
+        card2.classList.remove("animate");
+      }, 1500);
     } else {
       // if the cards don't match
       setTimeout(() => {
@@ -135,9 +162,9 @@ class MemoryGame {
     }
     // check if all cards are matched
     if (matchedCount === this.cards.length) {
-      alert("You Win!"); // shows an alert message when all cards are matched
-      gameScreen.style.display= "none";
-      gameOverScreen.style.display= "block";
+      alert("Nicely Done!"); // shows an alert message when all cards are matched
+      gameScreen.style.display = "none";
+      gameOverScreen.style.display = "block";
     }
   }
 
@@ -148,14 +175,13 @@ class MemoryGame {
   }
 }
 
-//hides game and game over screens initially
-gameScreen.style.display= "none";
-gameOverScreen.style.display= "none";
-
-
-//hide all images initially
+//hides all images initially
 const allImages = document.querySelectorAll(".card-image");
-allImages.forEach(img => img.style.display="none");
+allImages.forEach((img) => (img.style.display = "none"));
+
+//hides game and game over screens initially
+gameScreen.style.display = "none";
+gameOverScreen.style.display = "none";
 
 //adds event listener to start button
 startButton.addEventListener("click", () => {
@@ -163,6 +189,7 @@ startButton.addEventListener("click", () => {
   gameScreen.style.display = "block";
   const game = new MemoryGame(gameBoard);
   game.updateScore(0);
+  playBackGroundMusic();
 });
 
 // add event listener to restart button
@@ -172,5 +199,7 @@ restartButton.addEventListener("click", () => {
   gameBoard.innerHTML = "";
   const game = new MemoryGame(gameBoard);
   game.updateScore(0);
+  playBackGroundMusic();
+  game.moveCount=0; //resets move count
+  game.moveCounterDisplay.textContent= "Moves: 0";
 });
-
