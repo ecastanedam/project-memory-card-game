@@ -1,4 +1,3 @@
-
 const splashScreen = document.getElementById("splash-screen");
 const gameScreen = document.getElementById("game-screen");
 const gameOverScreen = document.getElementById("game-over-screen");
@@ -7,15 +6,49 @@ const restartButton = document.getElementById("restart-button");
 const gameBoard = document.querySelector(".game-board"); // finds and element by the CSS selector class
 
 const flipSound = new Audio("sounds/woosh.mp3");
+const winSound = new Audio("sounds/winner.mp3");
+const loseSound = new Audio("sounds/gameOver.mp3");
+
 const backGroundMusic = new Audio("sounds/Cosmic Drift - DivKid.mp3");
 backGroundMusic.loop = true;
-backGroundMusic.volume = 0.10;
+backGroundMusic.volume = 0.1;
 
 function playBackGroundMusic() {
   backGroundMusic.play();
 }
 
-// blueprint for creating game objects
+let timeLimit = 100;
+let timeLeft = timeLimit;
+let timerInterval;
+const timerDisplay = document.createElement("div");
+timerDisplay.id = "timer";
+timerDisplay.textContent = `Time: ${timeLeft}`;
+gameScreen.appendChild(timerDisplay);
+
+function startTimer() {
+  timeLeft = timeLimit; // resets timeLeft to the original timeLimit
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = `Time: ${timeLeft}`; // updates display
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      loseGame();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function loseGame() {
+  alert("Time's Up! Try again!");
+  gameScreen.style.display = "none";
+  gameOverScreen.style.display = "block";
+  loseSound.play();
+}
+
+// class for creating new game objects
 
 class MemoryGame {
   constructor(gameBoardElement) {
@@ -48,22 +81,22 @@ class MemoryGame {
     this.flippedCards = []; // array to store the flipped cards
     this.shuffleCards(); //method to shuffle the card data
     this.createCards(); //method to create card elements and add them to the game board
-    this.score =0; // initialize the score
+    this.score = 0; // initialize the score
     this.scoreDisplay = document.getElementById("score"); //stores the score display element
     this.moveCount = 0;
     this.createMoveCounterDisplay();
   }
 
-  createMoveCounterDisplay(){
-    this.moveCounterDisplay= document.createElement("div");
-    this.moveCounterDisplay.id= "move-counter";
-    this.moveCounterDisplay.textContent= "Moves: 0";
+  createMoveCounterDisplay() {
+    this.moveCounterDisplay = document.createElement("div");
+    this.moveCounterDisplay.id = "move-counter";
+    this.moveCounterDisplay.textContent = "Moves: 0";
     gameScreen.appendChild(this.moveCounterDisplay);
   }
 
-  incrementMoveCount(){
+  incrementMoveCount() {
     this.moveCount++;
-    this.moveCounterDisplay.textContent= `Moves: ${this.moveCount}`;
+    this.moveCounterDisplay.textContent = `Moves: ${this.moveCount}`;
   }
 
   // shuffles the card data
@@ -165,6 +198,8 @@ class MemoryGame {
       alert("Nicely Done!"); // shows an alert message when all cards are matched
       gameScreen.style.display = "none";
       gameOverScreen.style.display = "block";
+      stopTimer();
+      winSound.play();
     }
   }
 
@@ -190,6 +225,7 @@ startButton.addEventListener("click", () => {
   const game = new MemoryGame(gameBoard);
   game.updateScore(0);
   playBackGroundMusic();
+  startTimer();
 });
 
 // add event listener to restart button
@@ -200,6 +236,8 @@ restartButton.addEventListener("click", () => {
   const game = new MemoryGame(gameBoard);
   game.updateScore(0);
   playBackGroundMusic();
-  game.moveCount=0; //resets move count
-  game.moveCounterDisplay.textContent= "Moves: 0";
+  game.moveCount = 0; //resets move count
+  game.moveCounterDisplay.textContent = "Moves: 0";
+  stopTimer();
+  startTimer();
 });
