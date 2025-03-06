@@ -7,7 +7,10 @@ const gameBoard = document.querySelector(".game-board"); // finds and element by
 
 const flipSound = new Audio("sounds/woosh.mp3");
 const winSound = new Audio("sounds/winner.mp3");
+winSound.volume = 0.5;
+
 const loseSound = new Audio("sounds/gameOver.mp3");
+loseSound.volume = 0.5;
 
 const backGroundMusic = new Audio("sounds/Cosmic Drift - DivKid.mp3");
 backGroundMusic.loop = true;
