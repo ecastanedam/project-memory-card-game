@@ -1,9 +1,15 @@
 body {
     background: url(./img/background.jpg) no-repeat;
+    background-image: cover;
     text-align: center;
     background-size: cover;
     background-position: center;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
 .game-board{
@@ -92,7 +98,7 @@ body {
 }
 
 #score{
-    font-size: 1.5em;
+    font-size: 1.75em;
     margin-bottom: 10px;
     color: whitesmoke;
     padding: 5px;
@@ -108,7 +114,7 @@ h1{
 
 #move-counter{
 
-    font-size: 1.25em;
+    font-size: 1.5em;
     color: lightblue;
     background-color: #262474;
 }
