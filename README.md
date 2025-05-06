@@ -18,3 +18,7 @@ The goal of the game is to match all pairs of cards.
 * HTML
 * CSS
 * JavaScript
+
+## Live Demo
+
+You can play the game live here: [https://ecastanedam.github.io/project-memory-card-game/](https://ecastanedam.github.io/project-memory-card-game/)
